@@ -1,0 +1,13 @@
+[package]
+name = "rxed"
+version = "0.1.0"
+authors = ["TA Thanh Dinh <tathanhdinh@gmail.com>"]
+
+build = "build.rs"
+
+[dependencies]
+failure = "*"
+
+[build-dependencies]
+bindgen = "*"
+
