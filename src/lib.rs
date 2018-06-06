@@ -1,6 +1,8 @@
 extern crate failure;
+#[macro_use] extern crate failure_derive;
 
 pub mod gen;
+pub mod error;
 
 pub fn get_copyright() -> String {
     let cpyr = unsafe {
@@ -14,20 +16,6 @@ pub fn get_version() -> String {
         std::ffi::CStr::from_ptr(gen::xed_get_version())
     };
     vers.to_str().unwrap().to_owned()
-}
-
-#[derive(Default, Debug)]
-pub struct Error {
-    xed_error: gen::xed_error_enum_t,
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let err_str = unsafe {
-            std::ffi::CStr::from_ptr(gen::xed_error_enum_t2str(self.xed_error))
-        };
-        write!(f, "{}", err_str.to_str().unwrap())
-    }
 }
 
 
@@ -54,7 +42,7 @@ impl Decoder {
         Decoder { state }
     }
 
-    pub fn decode(itext: &[u8]) -> Result<DecodedInstruction, Error> {
+    pub fn decode(itext: &[u8]) -> Result<DecodedInstruction, error::Error> {
         let mut inst: gen::xed_decoded_inst_t = unsafe { 
             let mut inst: gen::xed_decoded_inst_t = std::mem::zeroed();
             gen::xed_decoded_inst_zero(&mut inst);
@@ -67,7 +55,7 @@ impl Decoder {
             Ok(DecodedInstruction { inst })
         }
         else {
-            Err(Error { xed_error })
+            Err(error::Error { xed_error })
         }
     }
 }
