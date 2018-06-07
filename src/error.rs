@@ -1,8 +1,6 @@
 
-// extern crate failure_derive;
-
 use std::{fmt, ffi};
-use failure::{Backtrace, Context, Fail};
+// use failure::{Backtrace, Context, Fail};
 
 // pub mod super::*;
 use super::gen;
@@ -10,6 +8,12 @@ use super::gen;
 #[derive(Fail, Debug)]
 pub struct Error {
     xed_error: gen::xed_error_enum_t,
+}
+
+impl Error {
+    pub fn new(xed_error: gen::xed_error_enum_t) -> Error {
+        Error {xed_error}
+    }
 }
 
 impl fmt::Display for Error {

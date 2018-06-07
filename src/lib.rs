@@ -42,20 +42,23 @@ impl Decoder {
         Decoder { state }
     }
 
-    pub fn decode(itext: &[u8]) -> Result<DecodedInstruction, error::Error> {
-        let mut inst: gen::xed_decoded_inst_t = unsafe { 
-            let mut inst: gen::xed_decoded_inst_t = std::mem::zeroed();
-            gen::xed_decoded_inst_zero(&mut inst);
-            inst
-        };
+    pub fn decode(&self, itext: &[u8]) -> Result<DecodedInstruction, error::Error> {
+        // let mut inst: gen::xed_decoded_inst_t = unsafe { 
+        //     // let mut inst: gen::xed_decoded_inst_t = std::mem::zeroed();
+        //     let mut inst = std::mem::uninitialized();
+        //     gen::xed_decoded_inst_zero(&mut inst);
+        //     inst
+        // };
+        let mut inst = unsafe { std::mem::uninitialized() };
         let xed_error = unsafe {
+            gen::xed_decoded_inst_zero_set_mode(&mut inst, &self.state);
             gen::xed_decode(&mut inst, itext.as_ptr(), itext.len() as u32)
         };
         if xed_error == gen::XED_ERROR_NONE {
             Ok(DecodedInstruction { inst })
         }
         else {
-            Err(error::Error { xed_error })
+            Err(error::Error::new(xed_error))
         }
     }
 }
@@ -72,8 +75,17 @@ impl Decoder {
 
 #[cfg(test)]
 mod tests {
-    use gen::*;
+    // use gen::*;
+    // use super::*;
     use super::*;
+
+    #[test]
+    fn xed_min_mode_legacy_32() {
+        let itext = [0xf, 0x85, 0x99, 0x00, 0x00, 0x00];
+        let decoder = Decoder::new(gen::XED_MACHINE_MODE_LEGACY_32, gen::XED_ADDRESS_WIDTH_32b);
+        decoder.decode(&itext);
+
+    }
 
     #[test]
     fn xed_min() {
