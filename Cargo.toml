@@ -5,6 +5,9 @@ authors = ["TA Thanh Dinh <tathanhdinh@gmail.com>"]
 
 build = "build.rs"
 
+[lib]
+crate-type = ["staticlib"]
+
 [dependencies]
 failure = "*"
 failure_derive = "*"

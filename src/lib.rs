@@ -83,8 +83,14 @@ mod tests {
     fn xed_min_mode_legacy_32() {
         let itext = [0xf, 0x85, 0x99, 0x00, 0x00, 0x00];
         let decoder = Decoder::new(gen::XED_MACHINE_MODE_LEGACY_32, gen::XED_ADDRESS_WIDTH_32b);
-        decoder.decode(&itext);
+        assert!(decoder.decode(&itext).is_ok())
+    }
 
+    #[test]
+    fn xed_min_mode_long_64() {
+        let itext = [0xf, 0x85, 0x99, 0x00, 0x00, 0x00];
+        let decoder = Decoder::new(gen::XED_MACHINE_MODE_LONG_64, gen::XED_ADDRESS_WIDTH_64b);
+        assert!(decoder.decode(&itext).is_ok())
     }
 
     #[test]
