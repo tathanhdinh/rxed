@@ -19,8 +19,12 @@ pub fn get_version() -> String {
 }
 
 
-pub struct DecodedInstruction {
-    inst: gen::xed_decoded_inst_t,
+// pub struct DecodedInstruction {
+//     inst: gen::xed_decoded_inst_t,
+// }
+pub struct DecodedInstruction(gen::xed_decoded_inst_t);
+
+impl DecodedInstruction {
 }
 
 impl std::fmt::Display for DecodedInstruction {
@@ -55,7 +59,7 @@ impl Decoder {
             gen::xed_decode(&mut inst, itext.as_ptr(), itext.len() as u32)
         };
         if xed_error == gen::XED_ERROR_NONE {
-            Ok(DecodedInstruction { inst })
+            Ok(DecodedInstruction(inst))
         }
         else {
             Err(error::Error::new(xed_error))
@@ -78,6 +82,11 @@ mod tests {
     // use gen::*;
     // use super::*;
     use super::*;
+
+    /* NOTES: 
+     *   xed should be compiled under -fPIC, for example
+     *   ./mfile.py --opt=3  --extra-flags=-fPIC
+     */
 
     #[test]
     fn xed_min_mode_legacy_32() {
